@@ -7,6 +7,8 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Notifications\SignupActivate;
+use Avatar;
+use Storage;
 
 class AuthController extends Controller
 {
@@ -26,6 +28,9 @@ class AuthController extends Controller
         ]);
 
         $user->save();
+
+        $avatar = Avatar::create($user->name)->getImageObject()->encode('png');
+        Storage::put('avatars/'.$user->id.'/avatar.png',(string)$avatar);
 
         $user->notify(new SignupActivate($user));
 
